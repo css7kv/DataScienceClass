@@ -135,22 +135,30 @@ CD[644,"VIS_contrast"]<- -181+12646*CD[644,"VIS_mean_distribution"]
 CD[671,"VIS_contrast"]<- -181+12646*CD[671,"VIS_mean_distribution"]
 which(is.na(CD$VIS_contrast))
 
+summary(CD)
+
+#normalize each attribute before kNN imputation
+CD$VIS_min <- (CD$VIS_min - min(CD$VIS_min, na.rm = TRUE))/(max(CD$VIS_min,na.rm=TRUE)-min(CD$VIS_min,na.rm = TRUE))
+CD$VIS_max <- (CD$VIS_max - min(CD$VIS_max, na.rm = TRUE))/(max(CD$VIS_max,na.rm=TRUE)-min(CD$VIS_max,na.rm = TRUE))
+CD$VIS_mean <- (CD$VIS_mean - min(CD$VIS_mean, na.rm = TRUE))/(max(CD$VIS_mean,na.rm=TRUE)-min(CD$VIS_mean,na.rm = TRUE))
+CD$VIS_mean_distribution <- (CD$VIS_mean_distribution - min(CD$VIS_mean_distribution, na.rm = TRUE))/(max(CD$VIS_mean_distribution,na.rm=TRUE)-min(CD$VIS_mean_distribution,na.rm = TRUE))
+CD$VIS_contrast <- (CD$VIS_contrast - min(CD$VIS_contrast, na.rm = TRUE))/(max(CD$VIS_contrast,na.rm=TRUE)-min(CD$VIS_contrast,na.rm = TRUE))
+CD$VIS_entropy <- (CD$VIS_entropy - min(CD$VIS_entropy, na.rm = TRUE))/(max(CD$VIS_entropy,na.rm=TRUE)-min(CD$VIS_entropy,na.rm = TRUE))
+CD$VIS_second_angular_momentum <- (CD$VIS_second_angular_momentum - min(CD$VIS_second_angular_momentum, na.rm = TRUE))/(max(CD$VIS_second_angular_momentum,na.rm=TRUE)-min(CD$VIS_second_angular_momentum,na.rm = TRUE))
+CD$IR_min <- (CD$IR_min - min(CD$IR_min, na.rm = TRUE))/(max(CD$IR_min,na.rm=TRUE)-min(CD$IR_min,na.rm = TRUE))
+CD$IR_max <- (CD$IR_max - min(CD$IR_max, na.rm = TRUE))/(max(CD$IR_max,na.rm=TRUE)-min(CD$IR_max,na.rm = TRUE))
+CD$IR_mean <- (CD$IR_mean - min(CD$IR_mean, na.rm = TRUE))/(max(CD$IR_mean,na.rm=TRUE)-min(CD$IR_mean,na.rm = TRUE))
+
+summary(CD)
+
 #kNN imputation, using sqrt(1008) as the value for k
 CD <- knnImputation(CD, k=31.7490157328)
 sum(is.na(CD))
 
 summary(CD)
 
-#defining a normalizing function
-normalize <- function(x) {
-  return ((x - min(x)) / (max(x) - min(x)))
-}
 
-#normalizing the entire Cloud Dataset
-CD_Norm <- as.data.frame(lapply(CD, normalize))
-summary(CD_Norm)
-
-#save file
+#save clean data file
 write.csv(CD, file = "clouddata_clean.csv")
 
 
